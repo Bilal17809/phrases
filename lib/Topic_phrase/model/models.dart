@@ -59,7 +59,7 @@ class Words {
   factory Words.fromMap(Map<String, dynamic> map) {
     return Words(
       id: map['id'] as int,
-      keyword: map['Keyword'] as String?,
+      keyword: map['keyword'] as String?,
       type: map['type'] as String?,
       definition: map['definition'] as String?,
       example: map['example'] as String?,

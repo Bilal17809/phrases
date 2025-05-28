@@ -3,31 +3,29 @@ import 'package:get/get.dart';
 import '../Topic_phrase/db/db_services.dart';
 import '../Topic_phrase/model/models.dart';
 
-class TopicController extends GetxController {
-  var topicList = <Words>[].obs;
-  var phrasesList = <Words>[].obs;
+class WordController extends GetxController {
+  var wordList = <Words>[].obs;
   final dbHelper = DatabaseDServices();
 
   @override
   void onInit() {
     super.onInit();
-    loadTopics();
+    loadWords();
   }
-
-  void loadTopics() async {
+  void loadWords() async {
     try {
-      final topics = await dbHelper.fetchTopics();
+      final words = await dbHelper.fetchWord();
+      wordList.value = words; // ✅ Assign to the observable
     } catch (e) {
-      print("Error loading topics: $e");
+      print("Error loading words: $e");
     }
   }
 
-
-  void loadPhrases(int ids) async {
-    try {
-      final topics = await dbHelper.fetchPhraseByTopic(ids);
-    } catch (e) {
-      print("Error loading phrases: $e");
-    }
-  }
+  // void loadWords() async {
+  //   try {
+  //     final wordList = await dbHelper.fetchWord();
+  //   } catch (e) {
+  //     print("Error loading words: $e");
+  //   }
+  // }
 }

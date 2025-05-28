@@ -64,12 +64,12 @@ class DatabaseDServices {
     }
   }
 
-  Future<List<TopicPhrases>> fetchWord() async {
+  Future<List<Words>> fetchWord() async {
     final db = await database;
     final List<Map<String, dynamic>> maps = await db.query('Voca5000Words');
     if (maps.isNotEmpty) {
       return List.generate(maps.length, (i) {
-        return TopicPhrases.fromMap(maps[i]);
+        return Words.fromMap(maps[i]);
       });
     }
     else {
