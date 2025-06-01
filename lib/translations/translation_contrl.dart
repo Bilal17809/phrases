@@ -25,7 +25,7 @@ class TranslationController extends GetxController {
   }
   TextEditingController controller = TextEditingController();
   final translator = GoogleTranslator();
-  FlutterTts flutterTts = FlutterTts(); // Create FlutterTts instance
+  FlutterTts flutterTts = FlutterTts();
 
   final Map<String, String> languageCodes = {
     'English': 'en',
@@ -69,7 +69,6 @@ class TranslationController extends GetxController {
     'Swahili': 'sw',
     'Zulu': 'zu',
   };
-
   final languageFlags = {
     'Afrikaans': 'ZA',
     'Albanian': 'AL',
@@ -163,8 +162,8 @@ class TranslationController extends GetxController {
       final result = await _methodChannel.invokeMethod('getTextFromSpeech', {'languageISO': languageISO});
 
       if (result != null && result.isNotEmpty) {
-        controller.text = result; // Updates the text field with transcribed text
-        await handleUserActionTranslate(result); // Trigger ad and then translate
+        controller.text = result;
+        await handleUserActionTranslate(result);
       }
     } on PlatformException catch (e) {
       print("####################### Error in Speech-to-Text: ${e.message}");
@@ -179,14 +178,14 @@ class TranslationController extends GetxController {
       await flutterTts.setEngine('com.google.android.tts');
 
       // Language map with corresponding locales
-      final Map<String, String> languageCodes = {
-        'Urdu': 'ur-PK',
-        'Hindi': 'hi-IN',
-        'Punjabi': 'pa-IN',
-        'Marathi': 'mr-IN',
-        'Arabic': 'ar',
-        'English': 'en-US',
-      };
+      // final Map<String, String> languageCodes = {
+      //   'Urdu': 'ur-PK',
+      //   'Hindi': 'hi-IN',
+      //   'Punjabi': 'pa-IN',
+      //   'Marathi': 'mr-IN',
+      //   'Arabic': 'ar',
+      //   'English': 'en-US',
+      // };
 
       // Get the selected language code, default to English if not found
       String selectedLanguageCode = languageCodes[selectedLanguage2.value] ?? 'en-US';
@@ -212,16 +211,17 @@ class TranslationController extends GetxController {
   }
   static const MethodChannel _channel = MethodChannel('com.example.phrases/tts');
 
-  // Future<void> speakUsingNative(String text, String languageCode) async {
-  //   try {
-  //     await _channel.invokeMethod('speakText', {'text': text, 'language': languageCode});
-  //   } on PlatformException catch (e) {
-  //     print("Error: ${e.message}");
-  //   }
-  // }
+  Future<void> speakUsingNative(String text, String languageCode) async {
+    try {
+      await _channel.invokeMethod('speakText', {'text': text, 'language': languageCode});
+    } on PlatformException catch (e) {
+      print("Error: ${e.message}");
+    }
+  }
+
   Future<void> handleUserActionTranslate(String text) async {
-      await translate(text); // Proceed with translation once the ad is closed
-      await speakText(); // Automatically speak after translation
+      await translate(text);
+      await speakText();
   }
 
   void onTranslateButtonPressed() async {
@@ -246,13 +246,13 @@ class TranslationController extends GetxController {
 
       final result = await translator.translate(text, from: sourceLang, to: targetLang);
 
-      translatedText.value = result.text; // Update translation
+      translatedText.value = result.text;
       // await speakText();
 
     } catch (e) {
       translatedText.value = "Translation failed: ${e.toString()}";
     } finally {
-      isLoading.value = false; // Hide loading indicator
+      isLoading.value = false;
     }
   }
 
@@ -281,23 +281,19 @@ class TranslationController extends GetxController {
     speakText();
   }
 
-  double _mapSpeedToDisplayValue(double value) {
-    return _mapPitchToDisplayValue(value); // Use the same logic for speed as pitch
-  }
-
-  double _mapDisplayValueToSpeed(double displayValue) {
-    return _mapDisplayValueToPitch(displayValue); // Use the same logic for speed as pitch
-  }
-
-// Map internal pitch value (linear) to a display value (exponential for smoother control)
-  double _mapPitchToDisplayValue(double value) {
-    // Ensures the value is between 0.1 and 1.0 and applies an exponential curve for smoother control
-    return 0.1 + (value * 0.9); // This line linearly maps 0.0 to 1.0 range to 0.1 to 1.0 range
-  }
-
-// Reverse map display value back to internal pitch value
-  double _mapDisplayValueToPitch(double displayValue) {
-    // Ensure that values remain within 0.1 to 1.0 range, reverse the previous mapping
-    return (displayValue - 0.1) / 0.9; // Maps back from the 0.1 to 1.0 range to the internal 0.0 to 1.0 range
-  }
+  // double _mapSpeedToDisplayValue(double value) {
+  //   return _mapPitchToDisplayValue(value); // Use the same logic for speed as pitch
+  // }
+  //
+  // double _mapDisplayValueToSpeed(double displayValue) {
+  //   return _mapDisplayValueToPitch(displayValue);
+  // }
+  //
+  // double _mapPitchToDisplayValue(double value) {
+  //   return 0.1 + (value * 0.9);
+  // }
+  //
+  // double _mapDisplayValueToPitch(double displayValue) {
+  //   return (displayValue - 0.1) / 0.9;
+  // }
 }
